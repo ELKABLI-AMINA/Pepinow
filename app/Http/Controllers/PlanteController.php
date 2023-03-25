@@ -2,64 +2,72 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\plante;
 use Illuminate\Http\Request;
-
+use  App\Http\Resources\PlanteResource;
+use App\Http\Resources\PlanteCollection;
+use App\Http\Requests\PlanteRequest;
 class PlanteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index()
-    {
-        //
+    {  
+        $plante= plante::all();
+        return new PlanteCollection($plante);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+   
+
+   
+    public function store(PlanteRequest $request)
     {
-        //
+    
+       $plante= plante::create([
+            'nom'=>$request->nom,
+            'description'=>$request->description,
+            'image'=>$request->image,
+            'prix'=>$request->prix,
+            'categorie_id'=>$request->categorie_id,
+            'user_id'=>1,
+        ]);
+        return new PlanteResource($plante);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+   
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(plante $plante)
     {
-        //
+        return response()->json($plante);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(plante $plante)
+   
+    
+
+   
+    public function update(PlanteRequest $request,plante $plante)
     {
-        //
+       
+       $plante->update([
+            'nom'=>$request->nom,
+            'description'=>$request->description,
+            'image'=>$request->image,
+            'prix'=>$request->prix,
+            'categorie_id'=>$request->categorie_id,
+            'user_id'=>1,
+        ]);
+        return new PlanteResource($plante);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, plante $plante)
-    {
-        //
-    }
+   
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(plante $plante)
     {
-        //
+        $plante->delete();
+        return response()->json([
+            'messsage'=>'plante deleted'
+        ]);
     }
 }
