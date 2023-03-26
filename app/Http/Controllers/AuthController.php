@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use App\Http\Requests\AuthRequest;
 
 
 
@@ -17,16 +19,12 @@ class AuthController extends Controller
    
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login','register']]);
+       
     } 
 
-    public function register(Request $request){
-        $this->validate($request,[
-            'name'    =>'required',
-            'email'   =>'required',
-            'password'=>'required'
-    
-            ] );
+    public function register(AuthRequest $request){
+      
            
            $user = User::create([
             
@@ -34,6 +32,7 @@ class AuthController extends Controller
                 'email'   =>$request->email,
                 'password'=>Hash::make($request->password)
             ]);
+            $user->assignRole('user');
             return response()->json([
                 'message'=>'Account created successfully'
             ]);
@@ -44,33 +43,29 @@ class AuthController extends Controller
     
 
         $credentials = request(['email', 'password']);
-
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        $token = auth()->attempt($credentials);
+        // if false
+        if (!$token) {
+            return response()->json(['error' => 'Unauthorized'], );
         }
 
         return $this->respondWithToken($token);
     }
 
-    public function reset(Request $request)
+    public function EditProfile(Request $request)
 {
     $request->validate([
-        'token' => 'required',
+       
         'email' => 'required|email',
-        'password' => 'required|confirmed|min:8'
+        'password' => 'required'
     ]);
 
-    $response = $this->broker()->reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, $password) {
-            $user->password = Hash::make($password);
-            $user->save();
-        }
-    );
-
-    return $response == Password::PASSWORD_RESET
-        ? response()->json(['message' => 'Mot de passe réinitialisé avec succès'], 200)
-        : response()->json(['message' => 'La réinitialisation du mot de passe a échoué'], 422);
+    $user = Auth::user();
+    $user->update([
+        'email'=>$request->email,
+        'password'=>$request->password
+    ]);
+    return response()->json(['message'=>'profile updated seccufully']);
 }
 
 

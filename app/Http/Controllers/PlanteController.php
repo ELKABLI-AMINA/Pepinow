@@ -5,11 +5,21 @@ namespace App\Http\Controllers;
 
 use App\Models\plante;
 use Illuminate\Http\Request;
+use App\Http\Requests\PlanteRequest;
+use Illuminate\Support\Facades\Auth;
 use  App\Http\Resources\PlanteResource;
 use App\Http\Resources\PlanteCollection;
-use App\Http\Requests\PlanteRequest;
+
 class PlanteController extends Controller
-{
+{  
+    public function __construct()
+    {
+      
+        $this->middleware('permission:consulter_plantes', ['only' => ['index','show']]);
+        $this->middleware('permission:créer_plante', ['only' =>  ['store']]);
+        $this->middleware('permission:éditer_plantes', ['only' =>  ['update']]);
+        $this->middleware('permission:supprimer_plantes', ['only' =>  ['destroy']]);
+    } 
     
     public function index()
     {  
@@ -24,12 +34,12 @@ class PlanteController extends Controller
     {
     
        $plante= plante::create([
-            'nom'=>$request->nom,
+            'name'=>$request->name,
             'description'=>$request->description,
             'image'=>$request->image,
             'prix'=>$request->prix,
             'categorie_id'=>$request->categorie_id,
-            'user_id'=>1,
+            'user_id'=>Auth::user()->id,
         ]);
         return new PlanteResource($plante);
     }
@@ -50,12 +60,11 @@ class PlanteController extends Controller
     {
        
        $plante->update([
-            'nom'=>$request->nom,
+            'name'=>$request->name,
             'description'=>$request->description,
             'image'=>$request->image,
             'prix'=>$request->prix,
             'categorie_id'=>$request->categorie_id,
-            'user_id'=>1,
         ]);
         return new PlanteResource($plante);
     }

@@ -9,7 +9,7 @@ use App\Models\User;
 class plante extends Model
 {
     use HasFactory;
-    protected $fillable=['nom','description','image','prix','categorie_id','user_id'];
+    protected $fillable=['name','description','image','prix','categorie_id','user_id'];
 
     public function categories(): BelongsTo
     {

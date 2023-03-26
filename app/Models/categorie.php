@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class categorie extends Model
 {
     use HasFactory;
-    protected $fillable=['nom','description'];
+    protected $fillable=['name','description'];
 
     public function plants(): HasMany
     {

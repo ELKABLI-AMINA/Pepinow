@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PlanteRequest extends FormRequest
+class AuthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,8 @@ class PlanteRequest extends FormRequest
     {
         return [
             'name'=>'required',
-            'description'=>'required',
-            'image'=>'required',
-            'prix'=>'required',
-            'categorie_id'=>'required|exists:categories,id',
+            'email'=>'required|unique:users,email',
+            'password'=>'required',
         ];
     }
 }

@@ -3,6 +3,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlanteController;
 use App\Http\Controllers\CategorieController;
 /*
@@ -20,17 +21,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('plante' , PlanteController::class);
+Route::apiResource('plante', PlanteController::class);
 
-Route::apiResource('categorie' , CategorieController::class);
-
-
+Route::apiResource('categorie', CategorieController::class);
 
 
-Route::post('login', 'AuthController@login');
-Route::post('logout', 'AuthController@logout');
-Route::post('refresh', 'AuthController@refresh');
-Route::post('me', 'AuthController@me');
-
-
-
+Route::controller(AuthController::class)->group(function () {
+    Route::post('register',  'register');
+    Route::post('login',  'login');
+    Route::post('logout', 'logout');
+    Route::post('refresh', 'refresh');
+    Route::put('edit_profile', 'EditProfile');
+});

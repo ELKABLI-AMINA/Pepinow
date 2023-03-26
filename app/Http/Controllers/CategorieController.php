@@ -10,7 +10,13 @@ use App\Models\categorie;
 
 class CategorieController extends Controller
 {
-    
+    public function __construct()
+    {
+        
+        $this->middleware('permission:creer_categorie', ['only' =>  ['store']]);
+        $this->middleware('permission:editer_categorie', ['only' =>  ['update']]);
+        $this->middleware('permission:supprimer_categorie', ['only' =>  ['destroy']]);
+    } 
 
     public function index()
     {  
@@ -23,7 +29,7 @@ class CategorieController extends Controller
     {
     
        $categorie= categorie::create([
-            'nom'=>$request->nom,
+            'name'=>$request->name,
             'description'=>$request->description, 
         ]);
         return new CategorieResource($categorie);
@@ -41,7 +47,7 @@ class CategorieController extends Controller
     {
        
        $categorie->update([
-            'nom'=>$request->nom,
+            'name'=>$request->name,
             'description'=>$request->description,
            
         ]);

@@ -16,7 +16,7 @@ class PlanteResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'nom'=>$this->nom,
+            'name'=>$this->name,
             'description'=>$this->description,
             'image'=>$this->image,
             'prix'=>$this->prix,

@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('plantes', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
+            $table->string('name');
             $table->string('image');
             $table->float('prix');
             $table->text('description');
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('categories_id')->constrained('categories');
+            $table->foreignId('categorie_id')->constrained('categories');
             $table->timestamps();
         });
     }
