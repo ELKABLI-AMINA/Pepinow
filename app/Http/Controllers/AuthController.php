@@ -63,7 +63,7 @@ class AuthController extends Controller
     $user = Auth::user();
     $user->update([
         'email'=>$request->email,
-        'password'=>$request->password
+        'password'=>Hash::make($request->password)
     ]);
     return response()->json(['message'=>'profile updated seccufully']);
 }

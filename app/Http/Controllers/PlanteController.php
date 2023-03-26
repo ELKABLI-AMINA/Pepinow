@@ -10,41 +10,42 @@ use Illuminate\Support\Facades\Auth;
 use  App\Http\Resources\PlanteResource;
 use App\Http\Resources\PlanteCollection;
 
+
 class PlanteController extends Controller
-{  
+{
     public function __construct()
     {
-      
-        $this->middleware('permission:consulter_plantes', ['only' => ['index','show']]);
+
+        $this->middleware('permission:consulter_plantes', ['only' => ['index', 'show']]);
         $this->middleware('permission:créer_plante', ['only' =>  ['store']]);
         $this->middleware('permission:éditer_plantes', ['only' =>  ['update']]);
         $this->middleware('permission:supprimer_plantes', ['only' =>  ['destroy']]);
-    } 
-    
+    }
+
     public function index()
-    {  
-        $plante= plante::all();
+    {
+        $plante = plante::all();
         return new PlanteCollection($plante);
     }
 
-   
 
-   
+
+
     public function store(PlanteRequest $request)
     {
-    
-       $plante= plante::create([
-            'name'=>$request->name,
-            'description'=>$request->description,
-            'image'=>$request->image,
-            'prix'=>$request->prix,
-            'categorie_id'=>$request->categorie_id,
-            'user_id'=>Auth::user()->id,
+
+        $plante = plante::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $request->image,
+            'prix' => $request->prix,
+            'categorie_id' => $request->categorie_id,
+            'user_id' => Auth::user()->id,
         ]);
         return new PlanteResource($plante);
     }
 
-   
+
 
 
     public function show(plante $plante)
@@ -52,31 +53,42 @@ class PlanteController extends Controller
         return response()->json($plante);
     }
 
-   
-    
 
-   
-    public function update(PlanteRequest $request,plante $plante)
+
+
+
+    public function update(PlanteRequest $request, plante $plante)
     {
-       
-       $plante->update([
-            'name'=>$request->name,
-            'description'=>$request->description,
-            'image'=>$request->image,
-            'prix'=>$request->prix,
-            'categorie_id'=>$request->categorie_id,
-        ]);
-        return new PlanteResource($plante);
+        $user = Auth::user()->id;
+        $user_id = $plante->user_id;
+        if ($user == $user_id) {
+            $plante->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'image' => $request->image,
+                'prix' => $request->prix,
+                'categorie_id' => $request->categorie_id,
+            ]);
+            return new PlanteResource($plante);
+        } else {
+            return response(['status' => 'you are not create this plante']);
+        }
     }
 
-   
 
-    
+
+
     public function destroy(plante $plante)
-    {
-        $plante->delete();
-        return response()->json([
-            'messsage'=>'plante deleted'
-        ]);
-    }
+    { 
+        $user = Auth::user()->id;
+        $user_id = $plante->user_id;
+        if ($user == $user_id) {
+            $plante->delete();
+            return response()->json([
+                'messsage' => 'plante deleted'
+            ]);
+        } else {
+            return response(['status' => 'you are not create this plante']);
+        }
+ }
 }
